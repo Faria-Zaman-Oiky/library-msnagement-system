@@ -1,4 +1,5 @@
 
+
 #include<stdio.h>
 #include<conio.h>
 #include<stdlib.h>
@@ -106,6 +107,24 @@ void issuebook()
    {
        printf("book is not found");
    }
+   fp = fopen("issue.txt", "ab");
+
+    printf("Enter Student Name: ");
+    fflush(stdin);
+    gets(s.student_name);
+
+    printf("Enter Student Class: ");
+    fflush(stdin);
+    gets(s.s_class);
+
+    printf("Enter Student Roll: ");
+    scanf("%d", &s.roll);
+
+    printf("Book Issued Successfully\n\n");
+
+    fwrite(&s, sizeof(s), 1, fp);
+    fclose(fp);
+
 }
 void member_login()
 {
@@ -113,9 +132,20 @@ void member_login()
 }
 void view_issuebook()
 {
-    printf("system under development\n\n\n");
 
+    system("cls");
+    printf("<== Book Issue List ==>\n\n");
+
+    printf("%-10s %-30s %-20s %-10s %-30s %s\n\n", "S.id", "Name", "Class", "Roll", "Book Name", "Date");
+
+    fp = fopen("issue.txt", "rb");
+    while(fread(&s, sizeof(s), 1, fp) == 1){
+        printf("%-10d %-30s %-20s %-10d %-30s %s\n", s.id, s.student_name, s.s_class, s.roll, s.bookname, s.date);
+    }
+
+    fclose(fp);
 }
+
 void del(){
     int id, f=0;
     system("cls");
@@ -148,17 +178,68 @@ void del(){
     rename("temp.txt", "booklist.txt");
 
 }
+void searchbook() {
+    int choice, id, found = 0;
+    char name[100];
+    system("cls");
+    printf("Search Book By:\n");
+    printf("1. Book ID\n");
+    printf("2. Book Name\n");
+    printf("Enter choice: ");
+    scanf("%d", &choice);
 
+    fp = fopen("booklist.txt", "rb");
+    if (fp == NULL) {
+        printf("Unable to open file.\n");
+        return;
+    }
 
+    if (choice == 1) {
+        printf("Enter Book ID to search: ");
+        scanf("%d", &id);
+        while (fread(&b, sizeof(b), 1, fp) == 1) {
+            if (b.id == id) {
+                printf("Book Found:\nID: %d\nName: %s\nAuthor: %s\nDate: %s\n", b.id, b.book_name, b.author_name, b.date);
+                found = 1;
+                break;
+            }
+        }
+    } else if (choice == 2) {
+        printf("Enter Book Name to search: ");
+        fflush(stdin);
+        gets(name);
+        while (fread(&b, sizeof(b), 1, fp) == 1) {
+            if (strcmp(b.book_name, name) == 0) {
+                printf("Book Found:\nID: %d\nName: %s\nAuthor: %s\nDate: %s\n", b.id, b.book_name, b.author_name, b.date);
+                found = 1;
+                break;
+            }
+        }
+    } else {
+        printf("Invalid choice.\n");
+    }
 
+    if (!found) {
+        printf("Book not found.\n");
+    }
 
+    fclose(fp);
+}
+void returnbook() {
+   printf("system under development\n\n\n");
+}
 
+void payfine()
+{
+    printf("system ujnder development\n\n\n");
+}
 
 int main()
 {
     int choice,num;
     int issue;
     int man;
+    printf("      LIBRARY MANAGEMENT SYSTEM    \n");
     while(1){
     printf("\n\n Modules of my  projects \n");
          printf("---------------------------------\n");
@@ -170,10 +251,10 @@ int main()
          printf("4. Issue book Management\n ");
          printf("  a) Issue book\n");
          printf("   b)view issue book\n");
-         printf("5.Return Book\n");
+         printf("5.Search Book\n");
          printf("6.Delete book\n");
         printf("7.Pay Fine\n");
-        printf("8. Search book \n");
+        printf("8. Return book \n");
         printf("9.Book Cataloging\n");
         printf("0. Exit\n");
 
@@ -217,11 +298,25 @@ int main()
             break;
             case 2: printf("you choose view issue book\n\n");
             view_issuebook();
+            break;
         }
+        break;
+        case 5: printf("you choose search book\n");
+        searchbook();
+        break;
         case 6: printf("you choose delete book\n");
         del();
         break;
+        case 7: printf("you choose pay fine\n\n\n");
+        payfine();
+        break;
+        case 8: printf("you choose return book\n");
+    returnbook();
+    break;
+
      }
     }
+
+
     return 0;
 }
